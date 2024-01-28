@@ -1,12 +1,12 @@
 #include "Team.h"
 
-Team::Team(std::string name, float skill) : name(name),
-                                          skillLevel(skill), wins(0), losses(0), draws(0),
-                                          form(1.0), morale(1.0), injuries(0) {}
+Team::Team(std::string name, float skillLevel) : name(name),
+                                                 skillLevel(skillLevel), wins(0), losses(0), draws(0),
+                                                 form(1.0), morale(1.0), injuries(0) {}
 
 void Team::updateForm(bool matchOutcome)
 {
-    const size_t maxRecentResults = 5;
+    const float maxRecentResults = 5;
     if (recentResults.size() >= maxRecentResults)
     {
         recentResults.pop();
@@ -45,4 +45,14 @@ void Team::updateInjuries()
     {
         injuries = std::max(injuries - 1, 0); // Min 0 injuries
     }
+}
+float Team::calculateEffectiveSkill()
+{
+    float formFactor = std::max(0.8f, std::min(form, 1.2f));
+    float moraleFactor = std::max(0.8f, std::min(morale, 1.2f));
+    int injuryCount = std::max(0, std::min(injuries, 5));
+    float injuryPenaltyFactor = 1.0f - (injuryCount * 0.05f);
+    float effectiveSkill = skillLevel * formFactor * moraleFactor * injuryPenaltyFactor;
+    effectiveSkill = std::max(0.0f, std::min(effectiveSkill, 100.0f));
+    return effectiveSkill;
 }

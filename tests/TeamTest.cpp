@@ -59,4 +59,29 @@ TEST_F(TeamTest, updateInjuries)
     EXPECT_LE(team->injuries, 5);
     EXPECT_GE(team->injuries, 0);
 }
+TEST_F(TeamTest, calculateEffectiveSkill_HighFormAndMorale)
+{
+    team->form = 1.2;
+    team->morale = 1.2;
+    float expectedSkill = 50.0f * 1.2f * 1.2f;
+    EXPECT_EQ(team->calculateEffectiveSkill(), expectedSkill);
+}
+TEST_F(TeamTest, CalculateEffectiveSkill_LowFormAndMorale)
+{
+    team->form = 0.8f;
+    team->morale = 0.8f;
+    float expectedSkill = 50.0f * 0.8f * 0.8f;
+    EXPECT_EQ(team->calculateEffectiveSkill(), expectedSkill);
+}
+TEST_F(TeamTest, CalculateEffectiveSkill_WithInjuries) {
+    team->injuries = 3;   // 3 injuries
+    float injuryPenaltyFactor = 1.0f - (3 * 0.05f);
+    float expectedSkill = 50.0f * 1.0f * 1.0f * injuryPenaltyFactor;  // Decreased due to injuries
+    EXPECT_FLOAT_EQ(team->calculateEffectiveSkill(), expectedSkill);
+}
+TEST_F(TeamTest, CalculateEffectiveSkill_MaxSkillCap) {
+    team->skillLevel = 120.0f;  // Over the usual max cap
+    float expectedSkill = 100.0f;  // Should be capped at 100
+    EXPECT_FLOAT_EQ(team->calculateEffectiveSkill(), expectedSkill);
+}
 // g++ -o team_test TeamTest.cpp Team.cpp -lgtest -lgtest_main -pthread
