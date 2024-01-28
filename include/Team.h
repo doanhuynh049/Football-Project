@@ -16,6 +16,9 @@ class Team {
 		int injuries;
 		float effectiveSkill;
 		int points;
+		int goalsScored;
+		int goalsConceded;
+		int goalDifference;
 		Team(std::string name, float skillLevel);
 		std::queue<bool> recentResults;
 		void updateForm(bool matchOutcome);
@@ -23,6 +26,7 @@ class Team {
 		void updateInjuries();
 		float calculateEffectiveSkill();
 		void calculatePoints();
+		void calculateGoalDifference();
 };
 #endif 
 

@@ -27,6 +27,10 @@ void Match::playMatch(){
         team1->draws++;
         team2->draws++;
     }
+    team1->goalsScored+=score1;
+    team1->goalsConceded+=score2;
+    team2->goalsScored+=score2;
+    team2->goalsConceded+=score1;
     team1->updateInjuries();
     team2->updateInjuries();
     std::cout << "Match Result: " << team1->name << " " << score1 << " - " << score2 << " " << team2->name << std::endl;

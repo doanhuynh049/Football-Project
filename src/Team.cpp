@@ -2,7 +2,8 @@
 
 Team::Team(std::string name, float skillLevel) : name(name),
                                                  skillLevel(skillLevel), wins(0), losses(0), draws(0),
-                                                 form(1.0), morale(1.0), injuries(0), points(0) {}
+                                                 form(1.0), morale(1.0), injuries(0), points(0),
+                                                 goalsScored(0), goalsConceded(0), goalDifference(0) {}
 
 void Team::updateForm(bool matchOutcome)
 {
@@ -55,4 +56,13 @@ float Team::calculateEffectiveSkill()
     float effectiveSkill = skillLevel * formFactor * moraleFactor * injuryPenaltyFactor;
     effectiveSkill = std::max(0.0f, std::min(effectiveSkill, 100.0f));
     return effectiveSkill;
+}
+void Team::calculatePoints()
+{
+    points = wins * 3 + draws;
+}
+
+void Team::calculateGoalDifference()
+{
+    goalDifference = goalsScored - goalsConceded;
 }
