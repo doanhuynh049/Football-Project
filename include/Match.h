@@ -12,5 +12,5 @@ class Match {
         Match(Team* t1, Team* t2):
             team1(t1), team2(t2), score1(0), score2(0), result(""){}
         void playMatch();
-
+        int calculateHalfTimeScore(float effectiveSkill);
 };

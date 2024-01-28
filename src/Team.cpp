@@ -2,7 +2,7 @@
 
 Team::Team(std::string name, float skillLevel) : name(name),
                                                  skillLevel(skillLevel), wins(0), losses(0), draws(0),
-                                                 form(1.0), morale(1.0), injuries(0) {}
+                                                 form(1.0), morale(1.0), injuries(0), points(0) {}
 
 void Team::updateForm(bool matchOutcome)
 {

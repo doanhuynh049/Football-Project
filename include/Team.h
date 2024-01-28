@@ -15,13 +15,14 @@ class Team {
 		float morale;
 		int injuries;
 		float effectiveSkill;
-
+		int points;
 		Team(std::string name, float skillLevel);
 		std::queue<bool> recentResults;
 		void updateForm(bool matchOutcome);
 		void updateMorale(bool matchWon);
 		void updateInjuries();
 		float calculateEffectiveSkill();
+		void calculatePoints();
 };
 #endif 
 
