@@ -8,7 +8,7 @@ protected:
 
     void SetUp() override
     {
-        team = new Team("Viet Nam", 50);
+        team = new Team(1, "Viet Nam", 50);
     }
     void TearDown() override
     {
@@ -17,11 +17,23 @@ protected:
 };
 TEST_F(TeamTest, Constructor)
 {
+    EXPECT_EQ(team->id, 1);
     EXPECT_EQ(team->name, "Viet Nam");
     EXPECT_EQ(team->skillLevel, 50);
     EXPECT_EQ(team->wins, 0);
     EXPECT_EQ(team->losses, 0);
     EXPECT_EQ(team->draws, 0);
+    EXPECT_EQ(team->form, 1);
+    EXPECT_EQ(team->morale, 1);
+    EXPECT_EQ(team->injuries, 0);
+    EXPECT_EQ(team->effectiveSkill, 0);
+    EXPECT_EQ(team->points, 0);
+    EXPECT_EQ(team->goalsScored, 0);
+    EXPECT_EQ(team->goalsConceded, 0);
+    EXPECT_EQ(team->goalDifference, 0);
+    EXPECT_FALSE(team->champion);
+    EXPECT_FALSE(team->runnerup);
+    EXPECT_FALSE(team->thirdplace);
 }
 TEST_F(TeamTest, updateForm)
 {
@@ -73,15 +85,49 @@ TEST_F(TeamTest, CalculateEffectiveSkill_LowFormAndMorale)
     float expectedSkill = 50.0f * 0.8f * 0.8f;
     EXPECT_EQ(team->calculateEffectiveSkill(), expectedSkill);
 }
-TEST_F(TeamTest, CalculateEffectiveSkill_WithInjuries) {
-    team->injuries = 3;   // 3 injuries
+TEST_F(TeamTest, CalculateEffectiveSkill_WithInjuries)
+{
+    team->injuries = 3; // 3 injuries
     float injuryPenaltyFactor = 1.0f - (3 * 0.05f);
-    float expectedSkill = 50.0f * 1.0f * 1.0f * injuryPenaltyFactor;  // Decreased due to injuries
+    float expectedSkill = 50.0f * 1.0f * 1.0f * injuryPenaltyFactor; // Decreased due to injuries
     EXPECT_FLOAT_EQ(team->calculateEffectiveSkill(), expectedSkill);
 }
-TEST_F(TeamTest, CalculateEffectiveSkill_MaxSkillCap) {
-    team->skillLevel = 120.0f;  // Over the usual max cap
-    float expectedSkill = 100.0f;  // Should be capped at 100
+TEST_F(TeamTest, CalculateEffectiveSkill_MaxSkillCap)
+{
+    team->skillLevel = 120.0f;    // Over the usual max cap
+    float expectedSkill = 100.0f; // Should be capped at 100
     EXPECT_FLOAT_EQ(team->calculateEffectiveSkill(), expectedSkill);
+}
+//Normal case
+TEST_F(TeamTest, calculatePoints)
+{
+    team->wins = 10;
+    team->draws = 10;
+    team->calculatePoints();
+    EXPECT_EQ(team->points, 40);
+}
+//Abnormal case
+TEST_F(TeamTest, calculatePoints_1)
+{
+    team->wins = -2;
+    team->draws = 4;
+    team->calculatePoints();
+    EXPECT_EQ(team->points, 0);
+}
+//Abnormal case
+TEST_F(TeamTest, calculatePoints_2)
+{
+    team->wins = 2;
+    team->draws = -4;
+    team->calculatePoints();
+    EXPECT_EQ(team->points, 0);
+}
+//Normal case
+TEST_F(TeamTest, calculateGoalDifference)
+{
+    team->goalsScored = 10;
+    team->goalsConceded = 10;
+    team->calculateGoalDifference();
+    EXPECT_EQ(team->goalDifference, 0);
 }
 // g++ -o team_test TeamTest.cpp Team.cpp -lgtest -lgtest_main -pthread
