@@ -3,20 +3,11 @@
 #include "Tournament.h"
 #include <algorithm>
 #include "DatabaseManagement.h"
+const std::string SEASON_START_MESSAGE = "The season start: \n";
+const std::string SEASON_END_MESSAGE = "The season terminated. \n";
 
-int main()
+void SortTeam(std::vector<Team> &teams)
 {
-    std::string message = "The season start: \n";
-    std::cout << message;
-    logEachSeason(message);
-    std::vector<Team> teams = createTeams();
-    std::vector<Match> schedule = scheduleRoundRobin(teams);
-    playTournamet(schedule);
-    for (auto &team : teams)
-    {
-        team.calculatePoints();
-        team.calculateGoalDifference();
-    }
     std::sort(teams.begin(), teams.end(), [](const Team &a, const Team &b)
               {
                   if (a.points == b.points)
@@ -29,18 +20,26 @@ int main()
                   }
                   return a.points > b.points; // Sort in descending order of points
               });
-    
+    teams[0].champion = true;
+    teams[1].runnerup = true;
+    teams[2].thirdplace = true;
+}
+void displayAndLogResult(std::vector<Team> &teams)
+{
     for (const auto &team : teams)
     {
         std::string seasonResult = team.name + " - Points: " + std::to_string(team.points) +
-                              " +/-: " + std::to_string(team.goalsScored) + "/" + std::to_string(team.goalsConceded) +
-                              ", Wins: " + std::to_string(team.wins) + ", Losses: " + std::to_string(team.losses) +
-                              ", Draws: " + std::to_string(team.draws);
+                                   " +/-: \t" + std::to_string(team.goalsScored) + "/" + std::to_string(team.goalsConceded) +
+                                   ",\tWins: " + std::to_string(team.wins) + ",\tLosses: " + std::to_string(team.losses) +
+                                   ",\tDraws: " + std::to_string(team.draws);
         std::cout << seasonResult << std::endl;
         logEachSeason(seasonResult);
-
     }
-    if (teams.size()>3 ){
+}
+void displayTop3Stand(std::vector<Team> teams)
+{
+    if (teams.size() > 3)
+    {
         Team &champion = teams[0];
         Team &runnerUp = teams[1];
         Team &thirdPlace = teams[2];
@@ -48,9 +47,37 @@ int main()
         std::cout << "Runner-Up: " << runnerUp.name << " - Points: " << runnerUp.points << std::endl;
         std::cout << "Third Place: " << thirdPlace.name << " - Points: " << thirdPlace.points << std::endl;
     }
+}
+int main()
+{
+    std::cout << SEASON_START_MESSAGE;
+    logEachSeason(SEASON_START_MESSAGE);
+    std::vector<Team> teams = createTeams();
+    std::vector<Match> schedule = scheduleRoundRobin(teams);
+    createTeamTable(teams);
+    // SQLite::Database db("TeamStatisticsDatabase.db", SQLite::OPEN_READWRITE);
+    // Team vietnam = Team(1, "VietNam", 80);
+    // vietnam.wins=44;
+    // updateTeamInDatabase(vietnam);
+    // displayAllTeamStatistic(teams);
+
+    playTournamet(schedule);
+
+    for (auto &team : teams)
+    {
+        team.calculatePoints();
+        team.calculateGoalDifference();
+        // updateTeamInDatabase(team);
+    }
+    SortTeam(teams);
+    updateSeasonResultInDB(teams);
+    displayAndLogResult(teams);
     logChampion(teams);
-    message = "The season terminated. \n";
-    std::cout << message << std::endl;
-    logEachSeason(message);
+    displayAllTeamStatistic(teams);
+
+    // saveDatabaseToFile("TeamStatisticsDatabase.db", "TeamStats.txt");
+
+    // std::cout << SEASON_END_MESSAGE;
+    logEachSeason(SEASON_END_MESSAGE);
     return 0;
 }

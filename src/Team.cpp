@@ -1,6 +1,6 @@
 #include "Team.h"
 
-Team::Team(std::string name, float skillLevel) : name(name),
+Team::Team(int id, std::string name, float skillLevel) : id(id), name(name),
                                                  skillLevel(skillLevel), wins(0), losses(0), draws(0),
                                                  form(1.0), morale(1.0), injuries(0), points(0),
                                                  goalsScored(0), goalsConceded(0), goalDifference(0) {}

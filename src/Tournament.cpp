@@ -4,15 +4,15 @@
 std::vector<Team> createTeams()
 {
     std::vector<Team> teams = {
-        Team("VietNam", 80),
-        Team("ThaiLand", 60),
-        Team("Malaisia", 65),
-        Team("Indonesia", 64),
-        Team("Singapore", 40),
-        Team("Myanmar", 45),
-        Team("Philipin", 42),
-        Team("Campuchia", 20),
-        Team("Australia", 100),
+        Team(1, "VietNam  ", 80),
+        Team(2, "ThaiLand ", 60),
+        Team(3, "Malaisia ", 65),
+        Team(4, "Indonesia", 64),
+        Team(5, "Singapore", 40),
+        Team(6, "Myanmar  ", 45),
+        Team(7, "Philipin ", 42),
+        Team(8, "Campuchia", 20),
+        Team(9, "Australia", 80),
 };
         
     return teams;

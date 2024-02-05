@@ -4,7 +4,10 @@
 CXX = g++
 
 # Compiler flags
-CXXFLAGS = -Wall -g -Iinclude
+CXXFLAGS = -Wall -g -Iinclude 
+
+# Linker flags
+LDFLAGS = -lsqlite3 -lSQLiteCpp
 
 # Directory
 SRCDIR = src
@@ -25,7 +28,7 @@ all: $(TARGET)
 	
 # Linking the executable from the object files
 $(TARGET): $(OBJECTS)
-	$(CXX) $(CXXFLAGS) -o $@ $(OBJECTS)
+	$(CXX) $(CXXFLAGS) -o $@ $(OBJECTS) $(LDFLAGS)
 	
 # Compiling the source files into object files
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp

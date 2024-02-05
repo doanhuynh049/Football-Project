@@ -6,6 +6,7 @@ class Team {
 	private:
 		
 	public:
+		int id;
 		std::string name;
 		float skillLevel;
 		int wins;
@@ -19,7 +20,10 @@ class Team {
 		int goalsScored;
 		int goalsConceded;
 		int goalDifference;
-		Team(std::string name, float skillLevel);
+		bool champion = false;
+		bool runnerup = false;
+		bool thirdplace = false;
+		Team(int id, std::string name, float skillLevel);
 		std::queue<bool> recentResults;
 		void updateForm(bool matchOutcome);
 		void updateMorale(bool matchWon);
