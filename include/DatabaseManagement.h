@@ -18,10 +18,10 @@ const std::string CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS TEAM("
                                      "GOALSCORE INTEGER, "
                                      "GOALCONCEDED INTEGER );";
 // static int selectCallback(void *data, int argc, char **argv, char **azColName);
-void displayAllTeamStatistic(std::vector<Team> &teams);
-void displayAllTeamStatistic(std::vector<Team> &teams);
-void createTeamTable(std::vector <Team> &teams);
+void displayAllTeamStatistic(std::vector<football::Team> &teams);
+void displayAllTeamStatistic(std::vector<football::Team> &teams);
+void createTeamTable(std::vector<football::Team> &teams);
 void saveDatabaseToFile(const std::string &dbPath, const std::string &outputPath);
-void updateSeasonResultInDB(std::vector<Team> teams);
+void updateSeasonResultInDB(std::vector<football::Team> teams);
 
-#endif 
+#endif

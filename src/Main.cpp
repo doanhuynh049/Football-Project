@@ -6,58 +6,58 @@
 const std::string SEASON_START_MESSAGE = "The season start: \n";
 const std::string SEASON_END_MESSAGE = "The season terminated. \n";
 
-void SortTeam(std::vector<Team> &teams)
+void SortTeam(std::vector<football::Team> &teams)
 {
-    std::sort(teams.begin(), teams.end(), [](const Team &a, const Team &b)
+    std::sort(teams.begin(), teams.end(), [](const football::Team &a, const football::Team &b)
               {
-                  if (a.points == b.points)
+                  if (a.getPoints() == b.getPoints())
                   {
-                      if (a.goalDifference == b.goalDifference)
+                      if (a.getGoalDifference() == b.getGoalDifference())
                       {
-                          return a.goalsScored > b.goalsScored;
+                          return a.getGoalsScored() > b.getGoalsScored();
                       }
-                      return a.goalDifference > b.goalDifference;
+                      return a.getGoalDifference() > b.getGoalDifference();
                   }
-                  return a.points > b.points; // Sort in descending order of points
+                  return a.getPoints() > b.getPoints(); // Sort in descending order of getPoints()
               });
-    teams[0].champion = true;
-    teams[1].runnerup = true;
-    teams[2].thirdplace = true;
+    teams[0].setChampion(true);
+    teams[1].setRunnerup(true);
+    teams[2].setThirdPlace(true);
 }
-void displayAndLogResult(std::vector<Team> &teams)
+void displayAndLogResult(std::vector<football::Team> &teams)
 {
     for (const auto &team : teams)
     {
-        std::string seasonResult = team.name + " - Points: " + std::to_string(team.points) +
-                                   " +/-: \t" + std::to_string(team.goalsScored) + "/" + std::to_string(team.goalsConceded) +
-                                   ",\tWins: " + std::to_string(team.wins) + ",\tLosses: " + std::to_string(team.losses) +
-                                   ",\tDraws: " + std::to_string(team.draws);
+        std::string seasonResult = team.getName() + " - Points: " + std::to_string(team.getPoints()) +
+                                   " +/-: \t" + std::to_string(team.getGoalsScored()) + "/" + std::to_string(team.getGoalsConceded()) +
+                                   ",\tWins: " + std::to_string(team.getWins()) + ",\tLosses: " + std::to_string(team.getLosses()) +
+                                   ",\tDraws: " + std::to_string(team.getDraws());
         std::cout << seasonResult << std::endl;
         logEachSeason(seasonResult);
     }
 }
-void displayTop3Stand(std::vector<Team> teams)
+void displayTop3Stand(std::vector<football::Team> teams)
 {
     if (teams.size() > 3)
     {
-        Team &champion = teams[0];
-        Team &runnerUp = teams[1];
-        Team &thirdPlace = teams[2];
-        std::cout << "Champion: " << champion.name << " - Points: " << champion.points << std::endl;
-        std::cout << "Runner-Up: " << runnerUp.name << " - Points: " << runnerUp.points << std::endl;
-        std::cout << "Third Place: " << thirdPlace.name << " - Points: " << thirdPlace.points << std::endl;
+        football::Team &champion = teams[0];
+        football::Team &runnerUp = teams[1];
+        football::Team &thirdPlace = teams[2];
+        std::cout << "Champion: " << champion.getName() << " - Points: " << champion.getPoints() << std::endl;
+        std::cout << "Runner-Up: " << runnerUp.getName() << " - Points: " << runnerUp.getPoints() << std::endl;
+        std::cout << "Third Place: " << thirdPlace.getName() << " - Points: " << thirdPlace.getPoints() << std::endl;
     }
 }
 int main()
 {
     std::cout << SEASON_START_MESSAGE;
     logEachSeason(SEASON_START_MESSAGE);
-    std::vector<Team> teams = createTeams();
-    std::vector<Match> schedule = scheduleRoundRobin(teams);
+    std::vector<football::Team> teams = createTeams();
+    std::vector<football::Match> schedule = scheduleRoundRobin(teams);
     createTeamTable(teams);
     // SQLite::Database db("TeamStatisticsDatabase.db", SQLite::OPEN_READWRITE);
     // Team vietnam = Team(1, "VietNam", 80);
-    // vietnam.wins=44;
+    // vietnam.getWins()=44;
     // updateTeamInDatabase(vietnam);
     // displayAllTeamStatistic(teams);
 

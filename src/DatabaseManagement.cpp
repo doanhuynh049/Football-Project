@@ -1,6 +1,5 @@
 #include "DatabaseManagement.h"
 
-
 static int selectCallback(void *data, int argc, char **argv, char **azColName)
 {
     for (int i = 0; i < argc; i++)
@@ -10,7 +9,7 @@ static int selectCallback(void *data, int argc, char **argv, char **azColName)
     std::cout << std::endl;
     return 0;
 }
-void displayAllTeamStatistic(std::vector<Team> &teams)
+void displayAllTeamStatistic(std::vector<football::Team> &teams)
 {
     sqlite3 *db;
     int rc = sqlite3_open("TeamStatisticsDatabase.db", &db);
@@ -22,7 +21,7 @@ void displayAllTeamStatistic(std::vector<Team> &teams)
     }
     for (auto &team : teams)
     {
-        const std::string SELECT_DATA_SQL = "SELECT * FROM TEAM WHERE ID = " + std::to_string(team.id) + ";";
+        const std::string SELECT_DATA_SQL = "SELECT * FROM TEAM WHERE ID = " + std::to_string(team.getID()) + ";";
         rc = sqlite3_exec(db, SELECT_DATA_SQL.c_str(), selectCallback, 0, 0);
         if (rc != SQLITE_OK)
         {
@@ -31,7 +30,7 @@ void displayAllTeamStatistic(std::vector<Team> &teams)
         }
     }
 }
-void createTeamTable(std::vector<Team> &teams)
+void createTeamTable(std::vector<football::Team> &teams)
 {
     std::cout << "Entering createTeamTable" << std::endl;
     std::ifstream dbFile("TeamStatisticsDatabase.db");
@@ -68,17 +67,17 @@ void createTeamTable(std::vector<Team> &teams)
         int champions = 0, runnerUp = 0, thirPlace = 0;
         const std::string INSERT_DATA_SQL = "INSERT INTO TEAM (ID, NAME, CHAMPION, RUNNERUP, THIRDPLACE, WINS, DRAWS, LOSSES, GOALSCORE, GOALCONCEDED)"
                                             "VALUES (" +
-                                            std::to_string(team.id) + ",'" + team.name + "'," + std::to_string(champions) + ", " + std::to_string(runnerUp) + ", " +
-                                            std::to_string(thirPlace) + ", " + std::to_string(team.wins) + ", " + std::to_string(team.wins) + ", " +
-                                            std::to_string(team.draws) + ", " + std::to_string(team.losses) + ", " + std::to_string(team.goalsScored) +
-                                            std::to_string(team.goalsConceded) + ");";
+                                            std::to_string(team.getID()) + ",'" + team.getName() + "'," + std::to_string(champions) + ", " + std::to_string(runnerUp) + ", " +
+                                            std::to_string(thirPlace) + ", " + std::to_string(team.getWins()) + ", " +
+                                            std::to_string(team.getDraws()) + ", " + std::to_string(team.getLosses()) + ", " + std::to_string(team.getGoalsScored()) +
+                                            std::to_string(team.getGoalsConceded()) + ");";
         rc = sqlite3_exec(db, INSERT_DATA_SQL.c_str(), 0, 0, 0);
         if (rc != SQLITE_OK)
         {
             std::cerr << "SQL error: " << sqlite3_errmsg(db) << std::endl;
             return;
         }
-        const std::string SELECT_DATA_SQL = "SELECT * FROM TEAM WHERE ID = " + std::to_string(team.id) + ";";
+        const std::string SELECT_DATA_SQL = "SELECT * FROM TEAM WHERE ID = " + std::to_string(team.getID()) + ";";
         rc = sqlite3_exec(db, SELECT_DATA_SQL.c_str(), selectCallback, 0, 0);
         if (rc != SQLITE_OK)
         {
@@ -90,8 +89,8 @@ void createTeamTable(std::vector<Team> &teams)
     sqlite3_close(db);
 }
 
-
-void updateSeasonResultInDB(std::vector<Team> teams){
+void updateSeasonResultInDB(std::vector<football::Team> teams)
+{
     std::cout << "Entering updateTeamInDatabase" << std::endl;
 
     try
@@ -105,7 +104,7 @@ void updateSeasonResultInDB(std::vector<Team> teams){
         }
         for (auto &team : teams)
         {
-            const std::string SELECT_DATA_SQL = "SELECT CHAMPION, RUNNERUP, THIRDPLACE, WINS, DRAWS, LOSSES, GOALSCORE, GOALCONCEDED FROM TEAM WHERE ID = " + std::to_string(team.id) + ";";
+            const std::string SELECT_DATA_SQL = "SELECT CHAMPION, RUNNERUP, THIRDPLACE, WINS, DRAWS, LOSSES, GOALSCORE, GOALCONCEDED FROM TEAM WHERE ID = " + std::to_string(team.getID()) + ";";
             std::map<std::string, int> currentValues;
             rc = sqlite3_exec(
                 db, SELECT_DATA_SQL.c_str(), [](void *data, int argc, char **argv, char **azColName) -> int
@@ -121,18 +120,18 @@ void updateSeasonResultInDB(std::vector<Team> teams){
                 std::cerr << "SQL error: " << sqlite3_errmsg(db) << std::endl;
                 return;
             }
-            currentValues["CHAMPION"] += team.champion ? 1 : 0;
-            currentValues["RUNNERUP"] += team.runnerup ? 1 : 0;
-            currentValues["THIRDPLACE"] += team.thirdplace ? 1 : 0;
-            currentValues["WINS"] += team.wins;
-            currentValues["DRAWS"] += team.draws;
-            currentValues["LOSSES"] += team.losses;
-            currentValues["GOALSCORE"] += team.goalsScored;
-            currentValues["GOALCONCEDED"] += team.goalsConceded;
+            currentValues["CHAMPION"] += team.isChampion() ? 1 : 0;
+            currentValues["RUNNERUP"] += team.isRunnerUp() ? 1 : 0;
+            currentValues["THIRDPLACE"] += team.isThirdPlace() ? 1 : 0;
+            currentValues["WINS"] += team.getWins();
+            currentValues["DRAWS"] += team.getDraws();
+            currentValues["LOSSES"] += team.getLosses();
+            currentValues["GOALSCORE"] += team.getGoalsScored();
+            currentValues["GOALCONCEDED"] += team.getGoalsConceded();
             // Construct the INSERT statement with the updated values
             const std::string INSERT_DATA_SQL = "REPLACE INTO TEAM (ID, NAME, CHAMPION, RUNNERUP, THIRDPLACE, WINS, DRAWS, LOSSES, GOALSCORE, GOALCONCEDED) "
                                                 "VALUES (" +
-                                                std::to_string(team.id) + ", '" + team.name + "', " + std::to_string(currentValues["CHAMPION"]) + ", " + std::to_string(currentValues["RUNNERUP"]) + ", " + std::to_string(currentValues["THIRDPLACE"]) + ", " + std::to_string(currentValues["WINS"]) + ", " + std::to_string(currentValues["DRAWS"]) + ", " + std::to_string(currentValues["LOSSES"]) + ", " + std::to_string(currentValues["GOALSCORE"]) + ", " + std::to_string(currentValues["GOALCONCEDED"]) + ");";
+                                                std::to_string(team.getID()) + ", '" + team.getName() + "', " + std::to_string(currentValues["CHAMPION"]) + ", " + std::to_string(currentValues["RUNNERUP"]) + ", " + std::to_string(currentValues["THIRDPLACE"]) + ", " + std::to_string(currentValues["WINS"]) + ", " + std::to_string(currentValues["DRAWS"]) + ", " + std::to_string(currentValues["LOSSES"]) + ", " + std::to_string(currentValues["GOALSCORE"]) + ", " + std::to_string(currentValues["GOALCONCEDED"]) + ");";
             rc = sqlite3_exec(db, INSERT_DATA_SQL.c_str(), 0, 0, 0);
 
             if (rc != SQLITE_OK)

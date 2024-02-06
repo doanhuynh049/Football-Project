@@ -5,6 +5,6 @@
 #include "Team.h"
 bool ensureDirectoryExists(const std::string& dirPath);
 void logMessage(const std::string & message);
-void logChampion(std::vector<Team> teams);
+void logChampion(std::vector<football::Team> teams);
 void logEachSeason(const std::string& seasonresult);
 #endif

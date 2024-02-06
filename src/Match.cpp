@@ -1,6 +1,9 @@
 #include "Match.h"
 #include "Team.h"
 #include <random>
+
+using namespace football;
+
 void Match::playMatch()
 {
 #ifndef UNIT_TEST
@@ -13,34 +16,31 @@ void Match::playMatch()
 #endif
     if (score1 > score2)
     {
-        team1->wins++;
-        team2->losses++;
-        team1->updateForm(true);
-        team1->updateMorale(true);
-        team2->updateForm(false);
-        team2->updateMorale(false);
+        team1->winMatch();
+        team2->lostMatch();
     }
     else if (score1 < score2)
     {
-        team1->losses++;
-        team2->wins++;
-        team2->updateForm(true);
-        team2->updateMorale(true);
-        team1->updateForm(false);
-        team1->updateMorale(false);
+        team1->lostMatch();
+        team2->winMatch();    
     }
     else
     {
-        team1->draws++;
-        team2->draws++;
+        team1->drawMatch();
+        team2->drawMatch();
     }
-    team1->goalsScored += score1;
-    team1->goalsConceded += score2;
-    team2->goalsScored += score2;
-    team2->goalsConceded += score1;
-    team1->updateInjuries();
-    team2->updateInjuries();
-    std::cout << "Match Result: " << team1->name << " " << score1 << " - " << score2 << " " << team2->name << std::endl;
+    team1->increaseGoalScored(score1);
+    team2->increaseGoalConceded(score2);
+    team2->increaseGoalScored(score2);
+    team1->increaseGoalConceded(score1);
+    
+    // team1->goalsScored += score1;
+    // team1->goalsConceded += score2;
+    // team2->goalsScored += score2;
+    // team2->goalsConceded += score1;
+    // team1->updateInjuries();
+    // team2->updateInjuries();
+    std::cout << "Match Result: " << team1->getName() << " " << score1 << " - " << score2 << " " << team2->getName() << std::endl;
 }
 int Match::calculateHalfTimeScore(float effectiveSkill)
 {

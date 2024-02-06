@@ -2,6 +2,7 @@
 #include <ctime>
 #include <iostream>
 #include "Team.h"
+namespace football{
 class Match {
     public: 
         Team* team1;
@@ -14,3 +15,4 @@ class Match {
         void playMatch();
         int calculateHalfTimeScore(float effectiveSkill);
 };
+}
